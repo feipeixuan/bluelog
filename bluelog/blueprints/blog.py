@@ -25,7 +25,7 @@ def index():
     if current_user.is_authenticated:
         pagination = Post.query.order_by(Post.timestamp.desc()).paginate(page, per_page=per_page)
     else:
-        pagination = Post.query.filter_by(is_private=False).order_by(Post.timestamp.desc()).paginate(page, per_page=per_page)
+        pagination = Post.query.filter(Post.is_private==False).order_by(Post.timestamp.desc()).paginate(page, per_page=per_page)
 
     posts = pagination.items
     return render_template('blog/index.html', pagination=pagination, posts=posts)
