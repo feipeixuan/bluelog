@@ -8,7 +8,7 @@
 from flask_ckeditor import CKEditorField
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField, TextAreaField, ValidationError, HiddenField, \
-    BooleanField, PasswordField
+    BooleanField, PasswordField, IntegerField
 from wtforms.validators import DataRequired, Email, Length, Optional, URL
 
 from bluelog.models import Category
@@ -68,3 +68,8 @@ class LinkForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(1, 30)])
     url = StringField('URL', validators=[DataRequired(), URL(), Length(1, 255)])
     submit = SubmitField()
+
+
+class IdeaForm(FlaskForm):
+    content = StringField('Content', validators=[DataRequired()])
+    progress = IntegerField('Progress', validators=[DataRequired()])

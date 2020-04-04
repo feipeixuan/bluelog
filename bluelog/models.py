@@ -82,3 +82,9 @@ class Link(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30))
     url = db.Column(db.String(255))
+
+
+class Idea(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(30), nullable=False)
+    progress = db.Column(db.Integer, default=0)
