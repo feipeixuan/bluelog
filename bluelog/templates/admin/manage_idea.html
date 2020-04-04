@@ -22,24 +22,24 @@
             </tr>
             </thead>
             {% for idea in ideas %}
-                <tr>
-                    <td>{{ moment(idea.add_time).format('YYYY年M月D日, h:mm ') }}</td>
-                    <td>
-                        <div class="progress">
-                            <div class="progress-bar" style="width:40%;" role="progressbar" aria-valuenow="40"
-                                 aria-valuemin="0" aria-valuemax="100">40%
-                            </div>
-                        </div>
-                    </td>
-                    <td>{{ idea.content }}</td>
-                    <td>
-                        {% if(idea.solve_time is not None %}
-                            {{ moment(idea.solve_time).format('YYYY年M月D日, h:mm ') }}
-                        {% else %}
-                            <p>暂时未完成</p>
-                        {% endif %}
-                    </td>
-                </tr>
+{#                <tr>#}
+{#                    <td>{{ moment(idea.add_time).format('YYYY年M月D日, h:mm ') }}</td>#}
+{#                    <td>#}
+{#                        <div class="progress">#}
+{#                            <div class="progress-bar" style="width:40%;" role="progressbar" aria-valuenow="40"#}
+{#                                 aria-valuemin="0" aria-valuemax="100">40%#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </td>#}
+{#                    <td>{{ idea.content }}</td>#}
+{#                    <td>#}
+{#                        {% if idea.solve_time is not None %}#}
+{#                            {{ moment(idea.solve_time).format('YYYY年M月D日, h:mm ') }}#}
+{#                        {% else %}#}
+{#                            <p>暂时未完成</p>#}
+{#                        {% endif %}#}
+{#                    </td>#}
+{#                </tr>#}
             {% endfor %}
         </table>
         <div class="page-footer">{{ render_pagination(pagination) }}</div>
