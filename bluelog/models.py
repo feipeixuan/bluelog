@@ -87,4 +87,4 @@ class Link(db.Model):
 class Idea(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(30), nullable=False)
-    progress = db.Column(db.Integer, default=0)
+    progress = db.Column(db.Integer, default=0,nullable=False)
