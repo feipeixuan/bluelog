@@ -13,7 +13,7 @@ from flask_ckeditor import upload_success, upload_fail
 
 from bluelog.extensions import db
 from bluelog.forms import SettingForm, PostForm, CategoryForm, LinkForm
-from bluelog.models import Post, Category, Comment, Link
+from bluelog.models import Post, Category, Comment, Link, Idea
 from bluelog.utils import redirect_back, allowed_file
 
 admin_bp = Blueprint('admin', __name__)
@@ -257,3 +257,13 @@ def upload_image():
     f.save(os.path.join(current_app.config['BLUELOG_UPLOAD_PATH'], f.filename))
     url = url_for('.get_image', filename=f.filename)
     return upload_success(url, f.filename)
+
+
+@admin_bp.route('/idea/manage')
+@login_required
+def manage_idea():
+    page = request.args.get('page', 1, type=int)
+    pagination = Idea.query.order_by().paginate(
+        page, per_page=current_app.config['BLUELOG_MANAGE_POST_PER_PAGE'])
+    ideas = pagination.items
+    return render_template('admin/manage_idea.html', page=page, pagination=pagination, ideas=ideas)
