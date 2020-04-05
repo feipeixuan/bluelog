@@ -6,13 +6,14 @@
     :license: MIT, see LICENSE for more details.
 """
 import os
+import datetime
 
 from flask import render_template, flash, redirect, url_for, request, current_app, Blueprint, send_from_directory
 from flask_login import login_required, current_user
 from flask_ckeditor import upload_success, upload_fail
 
 from bluelog.extensions import db
-from bluelog.forms import SettingForm, PostForm, CategoryForm, LinkForm
+from bluelog.forms import SettingForm, PostForm, CategoryForm, LinkForm ,IdeaForm
 from bluelog.models import Post, Category, Comment, Link, Idea
 from bluelog.utils import redirect_back, allowed_file
 
@@ -262,8 +263,46 @@ def upload_image():
 @admin_bp.route('/idea/manage')
 @login_required
 def manage_idea():
+    form = IdeaForm()
     page = request.args.get('page', 1, type=int)
-    pagination = Idea.query.order_by().paginate(
-        page, per_page=current_app.config['BLUELOG_MANAGE_POST_PER_PAGE'])
+    pagination = Idea.query.order_by(Idea.progress,Idea.add_time).paginate(
+        page, per_page=current_app.config['BLUELOG_IDEA_PER_PAGE'])
     ideas = pagination.items
-    return render_template('admin/manage_idea.html', page=page, pagination=pagination, ideas=ideas)
+    return render_template('admin/manage_idea.html', page=page, pagination=pagination, ideas=ideas,form=form)
+
+@admin_bp.route('/idea/new',methods=['POST'])
+@login_required
+def new_idea():
+    form = IdeaForm()
+    if form.is_submitted():
+       idea=Idea()
+       idea.content = form.content.data
+       db.session.add(idea)
+       db.session.commit()
+       flash('Idea created.', 'success')
+    return redirect(url_for(".manage_idea"))
+
+@admin_bp.route('/idea/<int:idea_id>/delete',methods=['GET'])
+@login_required
+def delete_idea(idea_id):
+    idea = Idea.query.get_or_404(idea_id)
+    db.session.delete(idea)
+    db.session.commit()
+    return redirect(url_for(".manage_idea"))
+
+@admin_bp.route('/idea/<int:idea_id>/edit',methods=['POST','GET'])
+@login_required
+def edit_idea(idea_id):
+    idea = Idea.query.get_or_404(idea_id)
+    form = IdeaForm()
+    if form.is_submitted():
+        idea.content = form.content.data
+        idea.progress = form.progress.data
+        if(idea.progress>=100):
+            idea.solve_time = datetime.datetime.now()
+        db.session.commit()
+        return redirect(url_for(".manage_idea"))
+    else:
+        form.content.data = idea.content
+        form.progress.data =  idea.progress
+        return render_template('admin/edit_idea.html', form=form,idea_id=idea_id)

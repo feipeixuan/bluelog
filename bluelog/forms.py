@@ -71,5 +71,6 @@ class LinkForm(FlaskForm):
 
 
 class IdeaForm(FlaskForm):
-    content = StringField('Content', validators=[DataRequired()])
-    progress = IntegerField('Progress', validators=[DataRequired()])
+    content = StringField('Content',  validators=[DataRequired("內容不能為空"), Length(1, 50)])
+    progress = IntegerField('Progress')
+    submit = SubmitField()
