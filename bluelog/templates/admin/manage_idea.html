@@ -33,7 +33,7 @@
                     </td>
                     <td>{{ idea.content }}</td>
                     <td>
-                        {% if idea.solve_time is not none %}
+                        {% if not idea.solve_time  %}
                             {{ moment(idea.solve_time).format('YYYY年M月D日, h:mm ') }}
                         {% else %}
                             <p>暂时未完成</p>
