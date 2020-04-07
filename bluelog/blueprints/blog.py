@@ -42,7 +42,7 @@ def show_category(category_id):
     category = Category.query.get_or_404(category_id)
     page = request.args.get('page', 1, type=int)
     per_page = current_app.config['BLUELOG_POST_PER_PAGE']
-    if current_user.is_authenticated:
+    if not current_user.is_authenticated:
         pagination = Post.query.with_parent(category).filter(Post.is_private == False).order_by(
             Post.timestamp.desc()).paginate(page, per_page)
     else:
