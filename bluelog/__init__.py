@@ -114,7 +114,8 @@ def register_template_context(app):
             unread_comments = None
         if not current_user.is_authenticated:
             for category in categories:
-                category.posts = Post.query.filter(Post.is_private == False and Post.category_id == category.id).all()
+                category.posts = Post.query.filter(Post.is_private == False ).\
+                    filter(Post.category_id == category.id).all()
 
         return dict(
             admin=admin, categories=categories,
