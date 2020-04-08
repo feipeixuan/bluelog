@@ -112,6 +112,10 @@ def register_template_context(app):
             unread_comments = Comment.query.filter_by(reviewed=False).count()
         else:
             unread_comments = None
+        if not current_user.current_user.is_authenticated:
+            for category in categories:
+                category.posts = Post.query.filter(Post.is_private == False and Post.category_id == category.id).all()
+
         return dict(
             admin=admin, categories=categories,
             links=links, unread_comments=unread_comments)
