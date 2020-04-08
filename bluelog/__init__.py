@@ -11,7 +11,7 @@ from logging.handlers import SMTPHandler, RotatingFileHandler
 
 import click
 from flask import Flask, render_template, request
-from flask_login import current_user
+from flask_login import login_required, current_user
 from flask_sqlalchemy import get_debug_queries
 from flask_wtf.csrf import CSRFError
 
@@ -221,3 +221,11 @@ def register_request_handlers(app):
                     % (q.duration, q.context, q.statement)
                 )
         return response
+
+    @app.before_request
+    def before_request():
+        if not current_user.is_authenticated:
+            ip=request.remote_addr
+            client=request.headers['User-Agent']
+            app.logger.info("IP: {0}  Client: {1}".format(ip,client))
+
