@@ -75,6 +75,7 @@ def register_logging(app):
     if not app.debug:
         app.logger.addHandler(mail_handler)
         app.logger.addHandler(file_handler)
+    logging.basicConfig(level=logging.INFO)
 
 
 def register_extensions(app):
@@ -225,7 +226,6 @@ def register_request_handlers(app):
     @app.before_request
     def before_request():
         if not current_user.is_authenticated:
-            ip=request.remote_addr
-            client=request.headers['User-Agent']
-            app.logger.info("IP: {0}  Client: {1}".format(ip,client))
-
+            ip = request.remote_addr
+            client = request.headers['User-Agent']
+            app.logger.info("IP: {0}  Client: {1}".format(ip, client))
