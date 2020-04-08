@@ -13,7 +13,7 @@ from flask_login import login_required, current_user
 from flask_ckeditor import upload_success, upload_fail
 
 from bluelog.extensions import db
-from bluelog.forms import SettingForm, PostForm, CategoryForm, LinkForm ,IdeaForm
+from bluelog.forms import SettingForm, PostForm, CategoryForm, LinkForm, IdeaForm
 from bluelog.models import Post, Category, Comment, Link, Idea
 from bluelog.utils import redirect_back, allowed_file
 
@@ -106,6 +106,20 @@ def set_comment(post_id):
     else:
         post.can_comment = True
         flash('Comment enabled.', 'success')
+    db.session.commit()
+    return redirect_back()
+
+
+@admin_bp.route('/post/<int:post_id>/set-private', methods=['POST'])
+@login_required
+def set_post_private(post_id):
+    post = Post.query.get_or_404(post_id)
+    if post.is_private:
+        post.is_private = False
+        flash('Private disabled.', 'success')
+    else:
+        post.is_private = True
+        flash('Private enabled.', 'success')
     db.session.commit()
     return redirect_back()
 
@@ -265,24 +279,26 @@ def upload_image():
 def manage_idea():
     form = IdeaForm()
     page = request.args.get('page', 1, type=int)
-    pagination = Idea.query.order_by(Idea.progress,Idea.add_time).paginate(
+    pagination = Idea.query.order_by(Idea.progress, Idea.add_time).paginate(
         page, per_page=current_app.config['BLUELOG_IDEA_PER_PAGE'])
     ideas = pagination.items
-    return render_template('admin/manage_idea.html', page=page, pagination=pagination, ideas=ideas,form=form)
+    return render_template('admin/manage_idea.html', page=page, pagination=pagination, ideas=ideas, form=form)
 
-@admin_bp.route('/idea/new',methods=['POST'])
+
+@admin_bp.route('/idea/new', methods=['POST'])
 @login_required
 def new_idea():
     form = IdeaForm()
     if form.is_submitted():
-       idea=Idea()
-       idea.content = form.content.data
-       db.session.add(idea)
-       db.session.commit()
-       flash('Idea created.', 'success')
+        idea = Idea()
+        idea.content = form.content.data
+        db.session.add(idea)
+        db.session.commit()
+        flash('Idea created.', 'success')
     return redirect(url_for(".manage_idea"))
 
-@admin_bp.route('/idea/<int:idea_id>/delete',methods=['GET'])
+
+@admin_bp.route('/idea/<int:idea_id>/delete', methods=['GET'])
 @login_required
 def delete_idea(idea_id):
     idea = Idea.query.get_or_404(idea_id)
@@ -290,7 +306,8 @@ def delete_idea(idea_id):
     db.session.commit()
     return redirect(url_for(".manage_idea"))
 
-@admin_bp.route('/idea/<int:idea_id>/edit',methods=['POST','GET'])
+
+@admin_bp.route('/idea/<int:idea_id>/edit', methods=['POST', 'GET'])
 @login_required
 def edit_idea(idea_id):
     idea = Idea.query.get_or_404(idea_id)
@@ -298,11 +315,11 @@ def edit_idea(idea_id):
     if form.is_submitted():
         idea.content = form.content.data
         idea.progress = form.progress.data
-        if(idea.progress>=100):
+        if (idea.progress >= 100):
             idea.solve_time = datetime.datetime.now()
         db.session.commit()
         return redirect(url_for(".manage_idea"))
     else:
         form.content.data = idea.content
-        form.progress.data =  idea.progress
-        return render_template('admin/edit_idea.html', form=form,idea_id=idea_id)
+        form.progress.data = idea.progress
+        return render_template('admin/edit_idea.html', form=form, idea_id=idea_id)
