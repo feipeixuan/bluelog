@@ -25,7 +25,8 @@ def index():
     if current_user.is_authenticated:
         pagination = Post.query.order_by(Post.timestamp.desc()).paginate(page, per_page=per_page)
     else:
-        pagination = Post.query.filter(Post.is_private==False).order_by(Post.timestamp.desc()).paginate(page, per_page=per_page)
+        pagination = Post.query.filter(Post.is_private == False).order_by(Post.timestamp.desc()).paginate(page,
+                                                                                                          per_page=per_page)
 
     posts = pagination.items
     return render_template('blog/index.html', pagination=pagination, posts=posts)
@@ -41,7 +42,12 @@ def show_category(category_id):
     category = Category.query.get_or_404(category_id)
     page = request.args.get('page', 1, type=int)
     per_page = current_app.config['BLUELOG_POST_PER_PAGE']
-    pagination = Post.query.with_parent(category).order_by(Post.timestamp.desc()).paginate(page, per_page)
+    if not current_user.is_authenticated:
+        pagination = Post.query.with_parent(category).filter(Post.is_private == False).order_by(
+            Post.timestamp.desc()).paginate(page, per_page)
+    else:
+        pagination = Post.query.with_parent(category).order_by(
+            Post.timestamp.desc()).paginate(page, per_page)
     posts = pagination.items
     return render_template('blog/category.html', category=category, pagination=pagination, posts=posts)
 
