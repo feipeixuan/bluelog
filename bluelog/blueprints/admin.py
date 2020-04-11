@@ -7,7 +7,9 @@
 """
 import os
 import datetime
+import time
 
+from shutil import copyfile
 from flask import render_template, flash, redirect, url_for, request, current_app, Blueprint, send_from_directory
 from flask_login import login_required, current_user
 from flask_ckeditor import upload_success, upload_fail
@@ -269,9 +271,13 @@ def upload_image():
     f = request.files.get('upload')
     if not allowed_file(f.filename):
         return upload_fail('Image only!')
-    f.save(os.path.join(current_app.config['BLUELOG_UPLOAD_PATH'], f.filename))
-    url = url_for('.get_image', filename=f.filename)
-    return upload_success(url, f.filename)
+    postfix = f.filename.rsplit('.', 1)[1].lower()
+    prefix = f.filename.rsplit('.', 1)[0].lower()
+    current_time = str(time.strftime('%Y%m%d', time.localtime()))+"_"
+    new_filename = current_time + str(hash(prefix)) + "." + postfix
+    f.save(os.path.join(current_app.config['BLUELOG_UPLOAD_PATH'], new_filename))
+    url = url_for('.get_image', filename=new_filename)
+    return upload_success(url, f.filenam)
 
 
 @admin_bp.route('/idea/manage')
