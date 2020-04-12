@@ -277,7 +277,7 @@ def upload_image():
     new_filename = current_time + str(hash(prefix)) + "." + postfix
     f.save(os.path.join(current_app.config['BLUELOG_UPLOAD_PATH'], new_filename))
     url = url_for('.get_image', filename=new_filename)
-    return upload_success(url, f.filenam)
+    return upload_success(url, f.filename)
 
 
 @admin_bp.route('/idea/manage')
