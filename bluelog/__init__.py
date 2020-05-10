@@ -31,6 +31,7 @@ def create_app(config_name=None):
 
     app = Flask('bluelog')
     app.config.from_object(config[config_name])
+    app.config['CKEDITOR_ENABLE_CODESNIPPET'] = True
 
     register_logging(app)
     register_extensions(app)
@@ -84,6 +85,7 @@ def register_extensions(app):
     login_manager.init_app(app)
     csrf.init_app(app)
     ckeditor.init_app(app)
+    ckeditor
     mail.init_app(app)
     moment.init_app(app)
     toolbar.init_app(app)

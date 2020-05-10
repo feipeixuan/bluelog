@@ -2,6 +2,7 @@
 {% from 'bootstrap/form.html' import render_form %}
 {% from 'bootstrap/pagination.html' import render_pagination %}
 
+ {{ ckeditor.load_code_theme() }}
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
